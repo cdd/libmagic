@@ -10,6 +10,10 @@ class MagicTest < Test::Unit::TestCase
     assert_equal("us-ascii", Magic.file_charset(absolute_path("us-ascii.txt")))
   end
   
+  def test_file_charset_for_large_CSV_file_that_libmagic_thinks_is_pascal_sourcecode
+    assert_equal("us-ascii", Magic.file_charset(absolute_path("part_of_ki_file.csv")))
+  end
+  
   def test_file_charset_for_utf8_file
     assert_equal("utf-8", Magic.file_charset(absolute_path("utf-8.txt")))
   end
