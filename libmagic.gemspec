@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "libmagic"
-  s.version = "0.2"
+  s.version = "0.3"
   
   s.specification_version = 2 if s.respond_to? :specification_version=
 
@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
               "test/files/windows-1252.txt",
               "test/files/us-ascii.txt",
               "test/files/macintosh.txt",
+              "test/files/part_of_ki_file.csv",
              "ext/libmagic_wrapper.c",
              "ext/extconf.rb", 
              "lib/libmagic.rb",
