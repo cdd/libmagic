@@ -1,0 +1,23 @@
+=== 0.4.0 / 2008-05-14
+
+* Determine mime type/charsets of strings in addition to files
+* Provide a method to more exhaustively search file contents for special characters. By default Unix libmagic will not search the entire file contents
+
+=== 0.3.0 / 2008-05-14
+
+* 1 major enhancement
+
+  * Birthday!
+
+=== 0.2.0 / 2008-05-14
+
+* 1 major enhancement
+
+  * Birthday!
+
+=== 0.1.0 / 2008-05-14
+
+* 1 major enhancement
+
+  * Birthday!
+

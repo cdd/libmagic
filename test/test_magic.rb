@@ -6,6 +6,14 @@ class MagicTest < Test::Unit::TestCase
     assert_equal("text/plain charset=utf-8", Magic.file_mime_type(absolute_path("utf-8.txt")))
   end
   
+  def test_string_mime_type_for_utf8_text
+    assert_equal("text/plain charset=utf-8", Magic.string_mime_type("Some truly Unicode characters like: 불거기"))
+  end
+  
+  def test_string_charset_for_utf8_text
+    assert_equal("utf-8", Magic.string_charset("Some truly Unicode characters like: 불거기"))
+  end
+
   def test_file_charset_for_ascii_file
     assert_equal("us-ascii", Magic.file_charset(absolute_path("us-ascii.txt")))
   end
@@ -20,6 +28,10 @@ class MagicTest < Test::Unit::TestCase
   
   def test_file_charset_for_iso_8859_1_file
     assert_equal("iso-8859-1", Magic.file_charset(absolute_path("iso-8859-1.txt")))
+  end
+  
+  def test_string_charset_for_iso_8859_1_text
+    assert_equal("iso-8859-1", Magic.string_charset("A\240B\240C"))
   end
   
   def test_file_charset_for_windows_1252_file
@@ -39,6 +51,31 @@ class MagicTest < Test::Unit::TestCase
     rescue RuntimeError => expected
       assert(expected.message =~ /no such file or directory/i) # for this, we don't use assert_raise
     end
+  end
+  
+  def test_file_charset_bang_exhaustively_checks_file_contents
+    # huge_file_with_one_special_character.csv
+    t1 = Time.now
+    assert_equal("us-ascii", Magic.file_charset(absolute_path("huge_file_with_one_special_character.csv")))
+    assert_equal("iso-8859-1", Magic.file_charset!(absolute_path("huge_file_with_one_special_character.csv")))
+    puts "took #{Time.now - t1} seconds"
+  end
+  
+  def test_file_charset_bang_returns_correct_value_for_us_ascii_file
+    assert_equal("us-ascii", Magic.file_charset!(absolute_path("us-ascii.txt")))
+  end
+  
+  def test_file_charset_bang_returns_correct_value_for_windows_1252_file
+    assert_equal("unknown", Magic.file_charset!(absolute_path("windows-1252.txt")))
+  end
+  
+  def test_file_charset_bang_returns_correct_value_for_UTF8_file
+    assert_equal("utf-8", Magic.file_charset!(absolute_path("utf-8.txt")))
+  end
+  
+  def test_file_charset_bang_handles_special_character_at_the_end_of_the_file
+    assert_equal("us-ascii", Magic.file_charset(absolute_path("huge_file_with_one_special_character_at_the_end.csv")))
+    assert_equal("iso-8859-1", Magic.file_charset!(absolute_path("huge_file_with_one_special_character_at_the_end.csv")))
   end
   
   def absolute_path(test_file_name)

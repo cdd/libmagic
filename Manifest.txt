@@ -1,0 +1,13 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+test/test_magic.rb
+test/files/utf-8.txt
+test/files/iso-8859-1.txt
+test/files/windows-1252.txt
+test/files/us-ascii.txt
+test/files/macintosh.txt
+ext/libmagic_wrapper.c
+ext/extconf.rb
+lib/libmagic.rb
