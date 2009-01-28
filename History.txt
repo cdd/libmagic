@@ -1,3 +1,7 @@
+=== 0.4.1 / 2009-01-26
+
+* Fix recognition of windows-1252 ellipsis character
+
 === 0.4.0 / 2008-05-14
 
 * Determine mime type/charsets of strings in addition to files

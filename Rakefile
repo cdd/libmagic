@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'hoe'
+$:.unshift('./ext')
 require './lib/libmagic.rb'
 
 Hoe.new('libmagic', Magic::VERSION) do |p|

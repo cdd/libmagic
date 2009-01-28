@@ -13,7 +13,7 @@ class MagicTest < Test::Unit::TestCase
   def test_string_charset_for_utf8_text
     assert_equal("utf-8", Magic.string_charset("Some truly Unicode characters like: 불거기"))
   end
-
+  
   def test_file_charset_for_ascii_file
     assert_equal("us-ascii", Magic.file_charset(absolute_path("us-ascii.txt")))
   end
@@ -61,6 +61,21 @@ class MagicTest < Test::Unit::TestCase
     puts "took #{Time.now - t1} seconds"
   end
   
+  (128..159).each do |windows_char|
+    eval <<-EOMETHOD
+      def test_string_charset_for_string_with_windows_char_#{windows_char}_returns_unknown
+        assert_equal("unknown", Magic.string_charset("over, and over, and over\\#{windows_char.to_s(8)}"))
+      end
+    EOMETHOD
+  end
+
+  # although this is redundant, it's nice to document the one weird case we've found explicitly
+  def test_string_charset_for_string_with_windows_ellipsis_returns_unknown
+    # windows 1252 ellipsis is 133 = 0205
+    # this is a weird case found from a file Sylvia had problem slurping
+    assert_equal("unknown", Magic.string_charset("over, and over, and over\205"))
+  end
+
   def test_file_charset_bang_returns_correct_value_for_us_ascii_file
     assert_equal("us-ascii", Magic.file_charset!(absolute_path("us-ascii.txt")))
   end
