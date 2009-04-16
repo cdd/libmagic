@@ -1,10 +1,11 @@
+require "rubygems"
 require 'lib/libmagic'
 require 'test/unit'
 
 class MagicTest < Test::Unit::TestCase
   def test_public_interface_is_limited
     assert_equal(%w(file_charset file_charset! file_mime_type string_charset string_mime_type),
-                 (Magic.public_methods - FFI::Library.methods).sort)
+                 (Magic.public_methods - Magic.instance_methods - FFI::Library.methods - FFI::Library.instance_methods).sort)
   end
   
   def test_file_mime_type_for_utf8_file
@@ -49,12 +50,16 @@ class MagicTest < Test::Unit::TestCase
     assert_equal("unknown", Magic.file_charset(absolute_path("macintosh.txt")))
   end
   
+  def test_file_charset_for_csv_file_that_looked_like_ppm_image
+    assert_equal("us-ascii", Magic.file_charset(absolute_path("file_with_text_that_looked_like_ppm_image.csv")))
+  end
+  
   def test_raises_if_file_does_not_exist
     begin
       Magic.file_charset("some file that does not exist.txt")
       fail "Did not raise"
-    rescue RuntimeError => expected
-      assert(expected.message =~ /no such file or directory/i) # for this, we don't use assert_raise
+    rescue ArgumentError => expected
+      assert(expected.message =~ /NULL/i) # for this, we don't use assert_raise
     end
   end
   

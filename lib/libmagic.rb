@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5'
+  VERSION = '0.5.1'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -129,7 +129,7 @@ module Magic
     
     private
     def load_cookie
-      cookie = magic_open(MAGIC_MIME | MAGIC_ERROR)
+      cookie = magic_open(MAGIC_MIME | MAGIC_ERROR | MAGIC_NO_CHECK_SOFT)
       magic_load(cookie, nil)
       return cookie
     end
