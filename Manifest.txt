@@ -8,6 +8,5 @@ test/files/iso-8859-1.txt
 test/files/windows-1252.txt
 test/files/us-ascii.txt
 test/files/macintosh.txt
-ext/libmagic_wrapper.c
-ext/extconf.rb
 lib/libmagic.rb
+lib/libmagic_wrapper.rb

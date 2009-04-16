@@ -2,6 +2,11 @@ require 'lib/libmagic'
 require 'test/unit'
 
 class MagicTest < Test::Unit::TestCase
+  def test_public_interface_is_limited
+    assert_equal(%w(file_charset file_charset! file_mime_type string_charset string_mime_type),
+                 (Magic.public_methods - FFI::Library.methods).sort)
+  end
+  
   def test_file_mime_type_for_utf8_file
     assert_equal("text/plain charset=utf-8", Magic.file_mime_type(absolute_path("utf-8.txt")))
   end
