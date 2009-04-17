@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.1'
+  VERSION = '0.5.2'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -111,6 +111,7 @@ module Magic
   MAGIC_NO_CHECK_TOKENS =   0x100000 # Don't check ascii/tokens
   
   attach_function :magic_open, [:int], :pointer
+  attach_function :magic_setflags, [:pointer, :int], :int
   attach_function :magic_load, [:pointer, :pointer], :int
   attach_function :magic_buffer, [:pointer, :pointer, :size_t], :string
   attach_function :magic_file, [:pointer, :string], :string
@@ -129,8 +130,10 @@ module Magic
     
     private
     def load_cookie
-      cookie = magic_open(MAGIC_MIME | MAGIC_ERROR | MAGIC_NO_CHECK_SOFT)
-      magic_load(cookie, nil)
+      # MAGIC_NO_CHECK_SOFT is supposed to prevent it from using the magic database, but doesn't seem to work on Linux.
+      cookie = magic_open(MAGIC_MIME | MAGIC_ERROR)
+      # Instead, we use a custom magic file with one simple entry.
+      magic_load(cookie, "#{File.dirname(__FILE__)}/custom-magic")
       return cookie
     end
     
