@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name = "libmagic"
-  s.version = "0.5.2"
+  s.version = "0.5.3"
   
   s.specification_version = 2 if s.respond_to? :specification_version=
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["CDD Development Staff <info@collaborativedrug.com>"]
-  s.date = "2009-04-16"
+  s.date = "2009-04-17"
   s.description = "Wrapper for libmagic's magic_file and magic_buffer methods"
   s.email = ""
   s.files = ["test/test_magic.rb", 
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
              "test/files/huge_file_with_one_special_character_at_the_end.csv",
              "test/files/part_of_ki_file.csv",
              "lib/libmagic.rb",
+             "lib/custom-magic",
              "lib/custom-magic.mime",
              "libmagic.gemspec"]
   s.has_rdoc = false
