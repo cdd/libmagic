@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.3'
+  VERSION = '0.5.4'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -18,14 +18,18 @@ module Magic
       quick_answer = file_charset(filename)
       
       if quick_answer == ASCII_CHARSET
-        # try harder
-        File.open(filename) do |io|
-          special_characters = collect_special_characters(io)
-          return string_charset(special_characters) unless special_characters.empty?
-        end
+        return File.open(filename) { |io| io_charset(io) } # try harder
+      else
+        return quick_answer
       end
-      
-      return quick_answer
+    end
+    
+    def io_charset(io)
+      io.rewind
+      special_characters = collect_special_characters(io)
+      return special_characters.empty? ? ASCII_CHARSET : string_charset(special_characters)
+    ensure
+      io.rewind
     end
     
     def string_charset(text)
@@ -73,9 +77,19 @@ module Magic
     
     def mime_type_to_charset(mime_type)
       if match = REGEX.match(mime_type)
-        return match[1]
+        return standardize_charset(match[1])
       else
         return nil
+      end
+    end
+    
+    # file returns different things in different versions
+    def standardize_charset(nonstandard)
+      case nonstandard
+      when "unknown-8bit"
+        "unknown"
+      else
+        nonstandard
       end
     end
   end

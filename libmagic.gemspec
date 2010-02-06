@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name = "libmagic"
-  s.version = "0.5.3"
+  s.version = "0.5.4"
   
   s.specification_version = 2 if s.respond_to? :specification_version=
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["CDD Development Staff <info@collaborativedrug.com>"]
-  s.date = "2009-04-17"
+  s.date = "2010-02-04"
   s.description = "Wrapper for libmagic's magic_file and magic_buffer methods"
   s.email = ""
   s.files = ["test/test_magic.rb", 

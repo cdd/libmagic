@@ -1,6 +1,6 @@
 = libmagic
 
-* No URL yet
+* git://git.collaborativedrug.com/libmagic.git
 
 == DESCRIPTION:
 
@@ -8,7 +8,7 @@ Ruby wrapper for the Unix file/libmagic utility, which can guess mime types and 
 
 == FEATURES/PROBLEMS:
 
-* Determines mime type of a file
+* Determines mime type of a file, IO or string
 * Can also just return the charset of a text file
 * Cannot detect various flavors of extended ASCII that are not ISO-8859-1, returns "unknown" as the charset in all cases
 * For many uses this is good enough, because by far the most common "unknown" will be windows-1252

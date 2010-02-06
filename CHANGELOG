@@ -1,3 +1,6 @@
+# Version 0.5.4
+* Now supports Magic.io_charset(io), which will determine the charset of an IO by reading the whole thing
+# Missing some stuff in here...
 # Version 0.2
 * now working on Linux! (libmagic returns different strings for magic_file with the MAGIC_MIME option on the two platforms)
 # Version 0.1
