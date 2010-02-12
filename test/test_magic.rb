@@ -1,6 +1,7 @@
 require "rubygems"
-require 'lib/libmagic'
-require 'test/unit'
+require "ruby-debug"
+require "lib/libmagic"
+require "test/unit"
 
 class MagicTest < Test::Unit::TestCase
   def test_public_interface_is_limited
@@ -79,6 +80,14 @@ class MagicTest < Test::Unit::TestCase
   
   def test_io_charset_for_utf8_file
     assert_equal("utf-8", Magic.io_charset(File.open(absolute_path("utf-8.txt"))))
+  end
+  
+  require "zlib"
+  def test_io_charset_for_gzipped_utf8_file
+    File.open(absolute_path("utf-8.csv.gz")) do |io|
+      uncompressed_io = Zlib::GzipReader.new(io)
+      assert_equal("utf-8", Magic.io_charset(uncompressed_io))
+    end
   end
   
   def test_io_charset_for_iso_8859_1_file

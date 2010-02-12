@@ -33,8 +33,12 @@ module Magic
     end
     
     def string_charset(text)
-      text.each_byte { |byte| return EXTENDED_ASCII_CHARSET if byte == PROBLEMATIC_EXTENDED_ASCII_CHAR }
-      mime_type_to_charset(string_mime_type(text))
+      quick_answer = mime_type_to_charset(string_mime_type(text))
+      if quick_answer == ASCII_CHARSET
+        text.each_byte { |byte| return EXTENDED_ASCII_CHARSET if byte == PROBLEMATIC_EXTENDED_ASCII_CHAR }
+      else
+        return quick_answer
+      end
     end
     
     private

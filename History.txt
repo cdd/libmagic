@@ -1,3 +1,7 @@
+=== 0.5.5 / 2010-02-11
+
+* More robust detection of problematic ellipses in windows-1252 files, such that it doesn't get confused by utf-8 files with angstroms in them
+
 === 0.5.4 / 2010-02-04
 
 * Now supports Magic.io_charset(io), which will determine the charset of an IO by reading the whole thing
