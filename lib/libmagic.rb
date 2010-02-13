@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.5'
+  VERSION = '0.5.6'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -36,9 +36,8 @@ module Magic
       quick_answer = mime_type_to_charset(string_mime_type(text))
       if quick_answer == ASCII_CHARSET
         text.each_byte { |byte| return EXTENDED_ASCII_CHARSET if byte == PROBLEMATIC_EXTENDED_ASCII_CHAR }
-      else
-        return quick_answer
       end
+      return quick_answer
     end
     
     private

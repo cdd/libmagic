@@ -1,3 +1,7 @@
+=== 0.5.6 / 2010-02-12
+
+* Fix regression in Magic#string_charset for an ASCII string
+
 === 0.5.5 / 2010-02-11
 
 * More robust detection of problematic ellipses in windows-1252 files, such that it doesn't get confused by utf-8 files with angstroms in them
