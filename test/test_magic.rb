@@ -1,12 +1,12 @@
+# coding: utf-8
 require "rubygems"
-require "ruby-debug"
 require "lib/libmagic"
 require "test/unit"
 
 class MagicTest < Test::Unit::TestCase
   def test_public_interface_is_limited
-    assert_equal(%w(file_charset file_charset! file_mime_type io_charset string_charset string_mime_type),
-                 (Magic.public_methods - Magic.instance_methods - FFI::Library.methods - FFI::Library.instance_methods).sort)
+    assert_equal(%w(file_charset file_charset! file_mime_type io_charset string_charset string_mime_type).map { |m| m.to_sym },
+                 (Magic.public_methods - Magic.instance_methods - FFI::Library.methods - FFI::Library.instance_methods).sort.map { |m| m.to_sym })
   end
   
   def test_file_mime_type_for_utf8_file
@@ -119,11 +119,13 @@ class MagicTest < Test::Unit::TestCase
   end
   
   def test_file_charset_raises_if_file_does_not_exist
+    # for this, we don't use assert_raise
     begin
       Magic.file_charset("some file that does not exist.txt")
       fail "Did not raise"
-    rescue ArgumentError => expected
-      assert(expected.message =~ /NULL/i) # for this, we don't use assert_raise
+    rescue Exception => expected
+      # ruby 1.9 and 1.8 return different exceptions
+      assert(expected.message =~ /(some file that does not exist.txt|NULL pointer)/i)
     end
   end
   

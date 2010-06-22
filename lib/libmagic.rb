@@ -50,7 +50,12 @@ module Magic
       while char = io.read(1)
         cache << char
         
-        if char[0] > LAST_ASCII_CHAR
+        # Ruby 1.8.6, 1.8.7 and 1.9 all have different (often incompatible) methods 
+        # for extracting the bytes from a string, hence the gymnastics.
+        byte = nil
+        char.each_byte { |b| byte = b }
+        
+        if byte > LAST_ASCII_CHAR
           # give the special character context
           special_characters << cache.join
           special_characters << io.read(EXHAUSTIVE_CHECK_CACHE_SIZE).to_s # could be nil, hence #to_s
