@@ -47,7 +47,8 @@ module Magic
       cache = create_cache
       special_characters = ""
       
-      while char = io.read(1)
+      until io.eof?
+        char = io.read(1)
         cache << char
         
         # Ruby 1.8.6, 1.8.7 and 1.9 all have different (often incompatible) methods 
