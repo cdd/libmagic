@@ -1,1 +1,3 @@
-some unicode content like this: µM
+Lots of unicode content in sequence to check that we don't accidentally cut multibyte characters: 漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字漢字
+Some unicode content like this: µM
+And more just for fun: 漢字
