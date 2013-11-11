@@ -154,6 +154,19 @@ class MagicTest < Test::Unit::TestCase
     assert_equal("iso-8859-1", Magic.file_charset!(absolute_path("huge_file_with_one_special_character_at_the_end.csv")))
   end
   
+  def test_collect_special_characters_is_empty_when_there_are_no_special_characters
+    assert_equal("", Magic.collect_special_characters(StringIO.new("")))
+    assert_equal("", Magic.collect_special_characters(StringIO.new("hello")))
+    assert_equal("", Magic.collect_special_characters(StringIO.new("12345678901234567890")))
+  end
+  
+  def test_collect_special_characters_returns_characters_with_context
+    assert_equal("µ", Magic.collect_special_characters(StringIO.new("µ")))
+    assert_equal("321µ123", Magic.collect_special_characters(StringIO.new("321µ123")))
+    assert_equal("0987654321µ1234567890", Magic.collect_special_characters(StringIO.new("0987654321µ1234567890")))
+    assert_equal("0987654321µ1234567890", Magic.collect_special_characters(StringIO.new("XXX0987654321µ1234567890XXX")))
+  end
+  
   def absolute_path(test_file_name)
     "#{ENV["PWD"]}/test/files/#{test_file_name}"
   end
