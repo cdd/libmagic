@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.7'
+  VERSION = '0.5.8'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -47,12 +47,12 @@ module Magic
     def collect_special_characters(io)
       special_characters_with_context = ""
       buffer = ""
-      leading_index = trailing_index = 0
+      leading_index = trailing_index = buffer_bytesize = 0 # cache buffer.bytesize for performance
       last_detection = nil
       
-      while leading_index < buffer.bytesize || !io.eof? do
+      while leading_index < buffer_bytesize || !io.eof? do
         # Add to buffer if needed
-        if leading_index == buffer.bytesize
+        if leading_index == buffer_bytesize
           # Need to read more, but save whatever is after trailing_index in the current buffer
           buffer.slice!(0...trailing_index)
           # adjust all indices
@@ -60,6 +60,7 @@ module Magic
           leading_index  -= trailing_index
           trailing_index -= trailing_index
           buffer << io.read(CHUNK_SIZE)
+          buffer_bytesize = buffer.bytesize
         end
         
         byte = buffer.getbyte(leading_index)
