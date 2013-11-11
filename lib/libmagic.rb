@@ -7,6 +7,7 @@ module Magic
   EXTENDED_ASCII_CHARSET = "unknown"
   PROBLEMATIC_EXTENDED_ASCII_CHAR = 133 # windows-1252 ellipsis
   REGEX = /charset=(.+)$/
+  CHUNK_SIZE = 2 ** 15
   
   class << self
     def file_charset(filename)
@@ -43,17 +44,25 @@ module Magic
     private
     CONTEXT_SIZE = 10
     LAST_ASCII_CHAR = 127
-    CHUNK_SIZE = 2 ** 15
     def collect_special_characters(io)
       special_characters_with_context = ""
-      content = io.read
-      # buffer = io.read(CHUNK_SIZE)
-      
+      buffer = ""
       leading_index = trailing_index = 0
       last_detection = nil
       
-      while leading_index < content.bytesize do
-        byte = content.getbyte(leading_index)
+      while leading_index < buffer.bytesize || !io.eof? do
+        # Add to buffer if needed
+        if leading_index == buffer.bytesize
+          # Need to read more, but save whatever is after trailing_index in the current buffer
+          buffer.slice!(0...trailing_index)
+          # adjust all indices
+          last_detection -= trailing_index if last_detection
+          leading_index  -= trailing_index
+          trailing_index -= trailing_index
+          buffer << io.read(CHUNK_SIZE)
+        end
+        
+        byte = buffer.getbyte(leading_index)
         if byte > LAST_ASCII_CHAR
           last_detection = leading_index
         end
@@ -66,7 +75,7 @@ module Magic
         else
           if last_detection < (leading_index - CONTEXT_SIZE)
             # It has been CONTEXT_SIZE bytes since the last non-ascii character, so we should write this chunk to the results
-            special_characters_with_context << content.byteslice(trailing_index...leading_index)
+            special_characters_with_context << buffer.byteslice(trailing_index...leading_index)
             trailing_index = leading_index + 1 # Just think of it as trailing_index = "leading_index's value at the end of the loop"
             last_detection = nil
           end
@@ -77,7 +86,7 @@ module Magic
       
       # Deal with leftovers, if present
       if last_detection
-        special_characters_with_context << content.byteslice(trailing_index, leading_index)
+        special_characters_with_context << buffer.byteslice(trailing_index, leading_index)
       end
       
       return special_characters_with_context

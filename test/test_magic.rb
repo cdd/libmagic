@@ -183,8 +183,30 @@ class MagicTest < Test::Unit::TestCase
     )
   end
   
+  def test_collect_special_characters_works_when_reading_multiple_chunks_to_the_buffer
+    default_chunk_size = 2 ** 15
+    assert_equal(default_chunk_size, Magic::CHUNK_SIZE)
+    begin
+      Magic.send(:remove_const, "CHUNK_SIZE")
+      Magic.send(:const_set, "CHUNK_SIZE", 2)
+      assert_special_chars_equal("µ", "µ")
+      assert_special_chars_equal("µ123", "µ123")
+      assert_special_chars_equal("321µ", "321µ")
+      assert_special_chars_equal("321µ123", "321µ123")
+      assert_special_chars_equal("0987654321µ", "XXX0987654321µ")
+      assert_special_chars_equal(
+        "0987654321µaaaaaµ12345678900987654321µ1234567890",
+        "XXX0987654321µaaaaaµ1234567890XXXXXX0987654321µ1234567890XXX"
+      )
+    ensure
+      Magic.send(:remove_const, "CHUNK_SIZE") if Magic.const_defined?("CHUNK_SIZE")
+      Magic.const_set("CHUNK_SIZE", default_chunk_size)
+    end
+    assert_equal(default_chunk_size, Magic::CHUNK_SIZE)
+  end
+  
   def assert_special_chars_equal(expected_output, input)
-    assert_equal(expected_output, Magic.send(:collect_special_characters, StringIO.new(input)))
+    assert_equal(expected_output.force_encoding(Encoding::BINARY), Magic.send(:collect_special_characters, StringIO.new(input)))
   end
   
   def absolute_path(test_file_name)
