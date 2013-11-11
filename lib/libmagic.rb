@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.6'
+  VERSION = '0.5.7'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -41,47 +41,46 @@ module Magic
     end
     
     private
-    EXHAUSTIVE_CHECK_CACHE_SIZE = 10
+    CONTEXT_SIZE = 10
     LAST_ASCII_CHAR = 127
+    CHUNK_SIZE = 2 ** 15
     def collect_special_characters(io)
-      cache = create_cache
-      special_characters = ""
+      special_characters_with_context = ""
+      content = io.read
+      # buffer = io.read(CHUNK_SIZE)
       
-      until io.eof?
-        char = io.read(1)
-        cache << char
-        
-        # Ruby 1.8.6, 1.8.7 and 1.9 all have different (often incompatible) methods 
-        # for extracting the bytes from a string, hence the gymnastics.
-        byte = nil
-        char.each_byte { |b| byte = b }
-        
+      leading_index = trailing_index = 0
+      last_detection = nil
+      
+      while leading_index < content.bytesize do
+        byte = content.getbyte(leading_index)
         if byte > LAST_ASCII_CHAR
-          # give the special character context
-          special_characters << cache.join
-          special_characters << io.read(EXHAUSTIVE_CHECK_CACHE_SIZE).to_s # could be nil, hence #to_s
-          cache.reset
-        end
-      end
-      
-      return special_characters
-    end
-    
-    def create_cache
-      cache = []
-      class << cache
-        alias_method :standard_append, :<<
-        def <<(element)
-          standard_append(element)
-          shift if self.size > EXHAUSTIVE_CHECK_CACHE_SIZE
-          return self
+          last_detection = leading_index
         end
         
-        def reset
-          delete_if { true }
+        if last_detection.nil?
+          # Advance the trailing index if it we haven't seen a non-ascii byte and the trailing index is CONTEXT_SIZE bytes behind
+          if trailing_index == leading_index - CONTEXT_SIZE
+            trailing_index += 1
+          end
+        else
+          if last_detection < (leading_index - CONTEXT_SIZE)
+            # It has been CONTEXT_SIZE bytes since the last non-ascii character, so we should write this chunk to the results
+            special_characters_with_context << content.byteslice(trailing_index...leading_index)
+            trailing_index = leading_index + 1 # Just think of it as trailing_index = "leading_index's value at the end of the loop"
+            last_detection = nil
+          end
         end
+        
+        leading_index += 1
       end
-      return cache
+      
+      # Deal with leftovers, if present
+      if last_detection
+        special_characters_with_context << content.byteslice(trailing_index, leading_index)
+      end
+      
+      return special_characters_with_context
     end
     
     def mime_type_to_charset(mime_type)

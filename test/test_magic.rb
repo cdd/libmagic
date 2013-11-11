@@ -2,6 +2,7 @@
 require "rubygems"
 require "lib/libmagic"
 require "test/unit"
+require "stringio"
 
 class MagicTest < Test::Unit::TestCase
   def test_public_interface_is_limited
@@ -38,7 +39,7 @@ class MagicTest < Test::Unit::TestCase
       end
     EOMETHOD
   end
-
+  
   # although this is redundant, it's nice to document the one weird case we've found explicitly
   def test_string_charset_for_string_with_windows_ellipsis_returns_unknown
     # windows 1252 ellipsis is 133 = 0205
@@ -155,16 +156,35 @@ class MagicTest < Test::Unit::TestCase
   end
   
   def test_collect_special_characters_is_empty_when_there_are_no_special_characters
-    assert_equal("", Magic.collect_special_characters(StringIO.new("")))
-    assert_equal("", Magic.collect_special_characters(StringIO.new("hello")))
-    assert_equal("", Magic.collect_special_characters(StringIO.new("12345678901234567890")))
+    assert_special_chars_equal("", "")
+    assert_special_chars_equal("", "hello")
+    assert_special_chars_equal("", "12345678901234567890")
   end
   
   def test_collect_special_characters_returns_characters_with_context
-    assert_equal("µ", Magic.collect_special_characters(StringIO.new("µ")))
-    assert_equal("321µ123", Magic.collect_special_characters(StringIO.new("321µ123")))
-    assert_equal("0987654321µ1234567890", Magic.collect_special_characters(StringIO.new("0987654321µ1234567890")))
-    assert_equal("0987654321µ1234567890", Magic.collect_special_characters(StringIO.new("XXX0987654321µ1234567890XXX")))
+    assert_special_chars_equal("µ", "µ")
+    assert_special_chars_equal("321µ123", "321µ123")
+    assert_special_chars_equal("µ123", "µ123")
+    assert_special_chars_equal("321µ", "321µ")
+    assert_special_chars_equal("0987654321\xC21234567890", "0987654321\xC21234567890")
+    assert_special_chars_equal("0987654321µ1234567890", "XXX0987654321µ1234567890XXX")
+    assert_special_chars_equal("µ1234567890", "µ1234567890XXX")
+    assert_special_chars_equal("0987654321µ", "XXX0987654321µ")
+  end
+    
+  def test_collect_special_characters_does_not_duplicate_context
+    assert_special_chars_equal("0987654321µaaaaaµ1234567890", "XXX0987654321µaaaaaµ1234567890XXX")
+  end
+  
+  def test_collect_special_characters_works_with_multiple_characters
+    assert_special_chars_equal(
+      "0987654321µaaaaaµ12345678900987654321µ1234567890", 
+      "XXX0987654321µaaaaaµ1234567890XXXXXX0987654321µ1234567890XXX"
+    )
+  end
+  
+  def assert_special_chars_equal(expected_output, input)
+    assert_equal(expected_output, Magic.send(:collect_special_characters, StringIO.new(input)))
   end
   
   def absolute_path(test_file_name)
