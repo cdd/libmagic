@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.8'
+  VERSION = '0.5.9'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
@@ -68,17 +68,17 @@ module Magic
           last_detection = leading_index
         end
         
-        if last_detection.nil?
-          # Advance the trailing index if it we haven't seen a non-ascii byte and the trailing index is CONTEXT_SIZE bytes behind
-          if trailing_index == leading_index - CONTEXT_SIZE
-            trailing_index += 1
-          end
-        else
+        if last_detection
           if last_detection < (leading_index - CONTEXT_SIZE)
             # It has been CONTEXT_SIZE bytes since the last non-ascii character, so we should write this chunk to the results
             special_characters_with_context << buffer.byteslice(trailing_index...leading_index)
             trailing_index = leading_index + 1 # Just think of it as trailing_index = "leading_index's value at the end of the loop"
             last_detection = nil
+          end
+        else
+          # Advance the trailing index if it we haven't seen a non-ascii byte and the trailing index is CONTEXT_SIZE bytes behind
+          if trailing_index == leading_index - CONTEXT_SIZE
+            trailing_index += 1
           end
         end
         
