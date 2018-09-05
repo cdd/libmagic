@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = "libmagic"
-  s.version = "0.5.9"
-  
+  s.version = "0.5.10"
+
   s.specification_version = 2 if s.respond_to? :specification_version=
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -34,11 +34,11 @@ Gem::Specification.new do |s|
     s.specification_version = 2
     
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency("ffi", "1.2.0")
+      s.add_runtime_dependency("ffi", "1.9.25")
     else
-      s.add_dependency("ffi", "1.2.0")
+      s.add_dependency("ffi", "1.9.25")
     end
   else
-    s.add_dependency("ffi", "1.2.0")
+    s.add_dependency("ffi", "1.9.25")
   end
 end
