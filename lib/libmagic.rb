@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Magic
-  VERSION = '0.5.9'
+  VERSION = '0.5.10'
   ASCII_CHARSET = "us-ascii"
   # currently libmagic doesn't distinguish the various extended ASCII charsets except ISO-8859-1
   EXTENDED_ASCII_CHARSET = "unknown"
