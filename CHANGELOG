@@ -1,3 +1,5 @@
+# Version 0.5.11
+* Address FFI deprecation errors with ruby 2.7
 # Version 0.5.6
 * Fix regression in Magic#string_charset for an ASCII string
 # Version 0.5.5

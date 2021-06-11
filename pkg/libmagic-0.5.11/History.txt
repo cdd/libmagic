@@ -1,0 +1,24 @@
+=== 0.5.6 / 2010-02-12
+
+* Fix regression in Magic#string_charset for an ASCII string
+
+=== 0.5.5 / 2010-02-11
+
+* More robust detection of problematic ellipses in windows-1252 files, such that it doesn't get confused by utf-8 files with angstroms in them
+
+=== 0.5.4 / 2010-02-04
+
+* Now supports Magic.io_charset(io), which will determine the charset of an IO by reading the whole thing
+
+=== 0.5.0 / 2009-03-10
+
+* Port to FFI instead of C extension, compatible with MRI and JRuby
+
+=== 0.4.1 / 2009-01-26
+
+* Fix recognition of windows-1252 ellipsis character
+
+=== 0.4.0 / 2008-05-14
+
+* Determine mime type/charsets of strings in addition to files
+* Provide a method to more exhaustively search file contents for special characters. By default Unix libmagic will not search the entire file contents
