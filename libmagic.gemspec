@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "libmagic"
-  s.version = "0.5.10"
+  s.version = "0.5.11"
 
   s.specification_version = 2 if s.respond_to? :specification_version=
 
@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.date = "2010-02-04"
   s.description = "Wrapper for libmagic's magic_file and magic_buffer methods"
   s.email = ""
-  s.files = ["test/test_magic.rb", 
+  s.files = ["test/test_magic.rb",
              "test/files/utf-8.txt",
              "test/files/iso-8859-1.txt",
              "test/files/windows-1252.txt",
@@ -28,17 +28,17 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.3.0"
   s.summary = "Wrapper for libmagic's magic_file and magic_buffer methods, plus extra goodness"
   s.test_files = ["test/test_magic.rb"]
-  
+
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 2
-    
+
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency("ffi", "1.9.25")
+      s.add_runtime_dependency("ffi", "1.15.1")
     else
-      s.add_dependency("ffi", "1.9.25")
+      s.add_dependency("ffi", "1.15.1")
     end
   else
-    s.add_dependency("ffi", "1.9.25")
+    s.add_dependency("ffi", "1.15.1")
   end
 end
